@@ -1,56 +1,30 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import PlannerPage from './PlannerPage';
-import SettingsPage from './SettingsPage';
+import HomePage from './pages/HomePage';
+import PlannerPage from './pages/PlannerPage';
+import SettingsPage from './pages/SettingsPage';
+import BottomNav from './components/BottomNav';
+
+type Tab = 'home' | 'planner' | 'settings';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'planner' | 'settings'>('home');
+  const [activeTab, setActiveTab] = useState<Tab>('home');
+
+  const renderPage = () => {
+    switch (activeTab) {
+      case 'planner':
+        return <PlannerPage />;
+      case 'settings':
+        return <SettingsPage />;
+      default:
+        return <HomePage />;
+    }
+  };
 
   return (
     <div className="App">
-      {activeTab === 'settings' ? (
-        <SettingsPage />
-      ) : activeTab === 'planner' ? (
-        <PlannerPage />
-      ) : (
-        <div>
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.tsx</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
-        </div>
-      )}
-      <nav className="bottom-nav">
-        <button
-          className={activeTab === 'home' ? 'active' : ''}
-          onClick={() => setActiveTab('home')}
-        >
-          Home
-        </button>
-        <button
-          className={activeTab === 'planner' ? 'active' : ''}
-          onClick={() => setActiveTab('planner')}
-        >
-          Planner
-        </button>
-        <button
-          className={activeTab === 'settings' ? 'active' : ''}
-          onClick={() => setActiveTab('settings')}
-        >
-          Settings
-        </button>
-      </nav>
+      {renderPage()}
+      <BottomNav activeTab={activeTab} onChange={setActiveTab} />
     </div>
   );
 };
