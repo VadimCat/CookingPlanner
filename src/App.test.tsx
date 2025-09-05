@@ -13,6 +13,13 @@ test('renders week heading and navigates', () => {
   expect(heading2).toBeInTheDocument();
 });
 
+test('shows settings page when settings tab clicked', () => {
+  render(<App />);
+  const settingsBtn = screen.getByRole('button', { name: 'Settings' });
+  fireEvent.click(settingsBtn);
+  expect(screen.getByRole('heading', { name: /settings/i })).toBeInTheDocument();
+});
+
 test('meal labels, remove dish and highlight current day', () => {
   render(<App />);
 

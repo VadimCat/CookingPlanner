@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import './App.css';
 import WeekPlanner from './WeekPlanner';
+import SettingsPage from './SettingsPage';
 
 function App() {
-  const [tab, setTab] = useState<'planner' | 'shopping'>('planner');
+  const [tab, setTab] = useState<'planner' | 'shopping' | 'settings'>('planner');
 
   return (
     <div className="App">
@@ -13,6 +14,7 @@ function App() {
           <h1>Shopping List</h1>
         </div>
       )}
+      {tab === 'settings' && <SettingsPage />}
       <nav className="BottomBar">
         <button
           className={tab === 'planner' ? 'active' : ''}
@@ -25,6 +27,12 @@ function App() {
           onClick={() => setTab('shopping')}
         >
           Shopping
+        </button>
+        <button
+          className={tab === 'settings' ? 'active' : ''}
+          onClick={() => setTab('settings')}
+        >
+          Settings
         </button>
       </nav>
     </div>
