@@ -11,16 +11,18 @@ interface Dish {
 
 type Plan = Record<string, Record<string, Dish[]>>; // day -> meal -> dishes
 
-const WeekPlanner: React.FC = () => {
-  const [meals, setMeals] = useState<string[]>(['Breakfast','Lunch','Dinner']);
+const defaultMeals = ['Breakfast','Lunch','Dinner'];
 
-  const createEmptyPlan = (): Plan => {
+const WeekPlanner: React.FC = () => {
+  const [mealsByWeek, setMealsByWeek] = useState<Record<number, string[]>>({0: defaultMeals});
+
+  const createEmptyPlan = (mealsList: string[]): Plan => {
     return Object.fromEntries(
-      days.map(d => [d, Object.fromEntries(meals.map(m => [m, [{ name: '', portions: 1 }]]))])
+      days.map(d => [d, Object.fromEntries(mealsList.map(m => [m, [{ name: '', portions: 1 }]]))])
     ) as Plan;
   };
 
-  const [plans, setPlans] = useState<Record<number, Plan>>({0: createEmptyPlan()});
+  const [plans, setPlans] = useState<Record<number, Plan>>({0: createEmptyPlan(defaultMeals)});
   const [week, setWeek] = useState(0);
   const [startDate] = useState<Date>(() => {
     const stored = localStorage.getItem('startDate');
@@ -37,11 +39,17 @@ const WeekPlanner: React.FC = () => {
   useEffect(() => {
     setPlans(prev => {
       if (prev[week]) return prev;
-      return { ...prev, [week]: createEmptyPlan() };
+      const mealsList = mealsByWeek[week] || defaultMeals;
+      return { ...prev, [week]: createEmptyPlan(mealsList) };
     });
-  }, [week, meals]);
+    setMealsByWeek(prev => {
+      if (prev[week]) return prev;
+      return { ...prev, [week]: mealsByWeek[0] || defaultMeals };
+    });
+  }, [week, mealsByWeek]);
 
-  const plan = plans[week] || createEmptyPlan();
+  const meals = mealsByWeek[week] || defaultMeals;
+  const plan = plans[week] || createEmptyPlan(meals);
 
   const handleDishChange = (day: string, meal: string, idx: number, value: string) => {
     setPlans(prev => ({
@@ -101,30 +109,26 @@ const WeekPlanner: React.FC = () => {
   const addMeal = () => {
     const name = prompt('Meal name?');
     if (name && !meals.includes(name)) {
-      setMeals([...meals, name]);
-      setPlans(prev => {
-        const updated = { ...prev };
-        Object.values(updated).forEach(weekPlan => {
-          days.forEach(day => {
-            weekPlan[day][name] = [{ name: '', portions: 1 }];
-          });
-        });
-        return updated;
-      });
+      setMealsByWeek(prev => ({ ...prev, [week]: [...meals, name] }));
+      setPlans(prev => ({
+        ...prev,
+        [week]: days.reduce((acc, day) => ({
+          ...acc,
+          [day]: { ...prev[week][day], [name]: [{ name: '', portions: 1 }] }
+        }), {} as Record<string, Record<string, Dish[]>>)
+      }));
     }
   };
 
   const removeMeal = (meal: string) => {
-    setMeals(meals.filter(m => m !== meal));
-    setPlans(prev => {
-      const updated = { ...prev };
-      Object.values(updated).forEach(weekPlan => {
-        days.forEach(day => {
-          delete weekPlan[day][meal];
-        });
-      });
-      return updated;
-    });
+    setMealsByWeek(prev => ({ ...prev, [week]: prev[week].filter(m => m !== meal) }));
+    setPlans(prev => ({
+      ...prev,
+      [week]: days.reduce((acc, day) => {
+        const { [meal]: _, ...rest } = prev[week][day];
+        return { ...acc, [day]: rest };
+      }, {} as Record<string, Record<string, Dish[]>>)
+    }));
   };
 
   const addMealToDay = (day: string) => {

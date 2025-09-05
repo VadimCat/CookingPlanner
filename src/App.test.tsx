@@ -47,6 +47,8 @@ test('add and remove meal per day and change portions', () => {
   fireEvent.click(removeMealBtn);
   const mondayCard = screen.getByRole('heading', { name: 'Monday' }).parentElement!;
   expect(within(mondayCard).queryByText('Breakfast')).toBeNull();
+  const tuesdayCard = screen.getByRole('heading', { name: 'Tuesday' }).parentElement!;
+  expect(within(tuesdayCard).getByText('Breakfast')).toBeInTheDocument();
 
   promptSpy.mockRestore();
 
@@ -54,4 +56,16 @@ test('add and remove meal per day and change portions', () => {
   expect((portionInputs[0] as HTMLInputElement).value).toBe('1');
   fireEvent.change(portionInputs[0], { target: { value: '3' } });
   expect((portionInputs[0] as HTMLInputElement).value).toBe('3');
+});
+
+test('removing meal does not affect other weeks', () => {
+  render(<App />);
+  const removeBreakfast = screen.getByLabelText('remove Breakfast');
+  fireEvent.click(removeBreakfast);
+  const mondayCard = screen.getByRole('heading', { name: 'Monday' }).parentElement!;
+  expect(within(mondayCard).queryByText('Breakfast')).toBeNull();
+  const next = screen.getByRole('button', { name: /next week/i });
+  fireEvent.click(next);
+  const mondayNext = screen.getByRole('heading', { name: 'Monday' }).parentElement!;
+  expect(within(mondayNext).getByText('Breakfast')).toBeInTheDocument();
 });
