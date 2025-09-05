@@ -64,9 +64,28 @@
   margin-bottom: 8px;
 }
 
-.meal-block select {
-  padding: 4px;
+.meal-label {
+  font-weight: 600;
   margin-bottom: 4px;
+}
+
+.dish-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.dish-row select {
+  flex: 1;
+  padding: 4px;
+}
+
+.remove-dish {
+  margin-left: 4px;
+  border: none;
+  background: none;
+  color: #d32f2f;
+  font-size: 16px;
 }
 
 .add-dish {
@@ -76,6 +95,10 @@
   color: white;
   padding: 2px 8px;
   border-radius: 4px;
+}
+
+.day-card.today {
+  background: #e3f2fd;
 }
 
 @media (min-width: 600px) {

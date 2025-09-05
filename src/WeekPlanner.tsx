@@ -64,6 +64,22 @@ const WeekPlanner: React.FC = () => {
     }));
   };
 
+  const removeDish = (day: string, meal: string, idx: number) => {
+    setPlans(prev => {
+      const updatedMeal = prev[week][day][meal].filter((_, i) => i !== idx);
+      return {
+        ...prev,
+        [week]: {
+          ...prev[week],
+          [day]: {
+            ...prev[week][day],
+            [meal]: updatedMeal.length ? updatedMeal : ['']
+          }
+        }
+      };
+    });
+  };
+
   const addMeal = () => {
     const name = prompt('Meal name?');
     if (name && !meals.includes(name)) {
@@ -98,6 +114,9 @@ const WeekPlanner: React.FC = () => {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
   const format = (d: Date) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const today = new Date();
+  const currentWeek = Math.floor((today.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  const currentDayName = days[(today.getDay() + 6) % 7];
 
   return (
     <div className="WeekPlanner">
@@ -122,21 +141,30 @@ const WeekPlanner: React.FC = () => {
       </div>
 
       {days.map(day => (
-        <div key={day} className="day-card">
+        <div key={day} className={`day-card ${day === currentDayName && week === currentWeek ? 'today' : ''}`}>
           <h2>{day}</h2>
           {meals.map(meal => (
             <div key={meal} className="meal-block">
+              <span className="meal-label">{meal}</span>
               {plan[day][meal].map((dish, idx) => (
-                <select
-                  key={idx}
-                  value={dish}
-                  onChange={e => handleChange(day, meal, idx, e.target.value)}
-                >
-                  <option value="">Select dish</option>
-                  {recipes.map(r => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
+                <div key={idx} className="dish-row">
+                  <select
+                    value={dish}
+                    onChange={e => handleChange(day, meal, idx, e.target.value)}
+                  >
+                    <option value="">Select dish</option>
+                    {recipes.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                  <button
+                    className="remove-dish"
+                    aria-label={`remove ${meal} dish`}
+                    onClick={() => removeDish(day, meal, idx)}
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
               <button className="add-dish" onClick={() => addDish(day, meal)}>+</button>
             </div>
