@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './WeekPlanner.css';
+import WeekHeader from './components/WeekHeader';
+import MealsControl from './components/MealsControl';
+import DayCard from './components/DayCard';
+import { Dish, Plan } from './types';
 
 const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const recipes = ['Omelette','Salad','Soup','Steak'];
-
-interface Dish {
-  name: string;
-  portions: number;
-}
-
-type Plan = Record<string, Record<string, Dish[]>>; // day -> meal -> dishes
 
 const defaultMeals = ['Breakfast','Lunch','Dinner'];
 
@@ -30,7 +27,7 @@ const WeekPlanner: React.FC = () => {
     const today = new Date();
     const monday = new Date(today);
     const day = today.getDay();
-    const diff = day === 0 ? -6 : 1 - day; // make Monday first
+    const diff = day === 0 ? -6 : 1 - day;
     monday.setDate(today.getDate() + diff);
     localStorage.setItem('startDate', monday.toISOString());
     return monday;
@@ -163,79 +160,37 @@ const WeekPlanner: React.FC = () => {
   weekStart.setDate(weekStart.getDate() + week * 7);
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
-  const format = (d: Date) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const today = new Date();
   const currentWeek = Math.floor((today.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
   const currentDayName = days[(today.getDay() + 6) % 7];
 
   return (
     <div className="WeekPlanner">
-      <div className="week-header">
-        <button aria-label="Previous week" onClick={() => setWeek(w => w - 1)} disabled={week === 0}>
-          &lsaquo;
-        </button>
-        <h1>Week {week + 1}: {format(weekStart)} - {format(weekEnd)}</h1>
-        <button aria-label="Next week" onClick={() => setWeek(w => w + 1)}>
-          &rsaquo;
-        </button>
-      </div>
+      <WeekHeader
+        week={week}
+        weekStart={weekStart}
+        weekEnd={weekEnd}
+        onPrev={() => setWeek(w => w - 1)}
+        onNext={() => setWeek(w => w + 1)}
+      />
 
-      <div className="meals-control">
-        {meals.map(m => (
-          <span key={m} className="meal-chip">
-            {m}
-            <button aria-label={`remove ${m}`} onClick={() => removeMeal(m)}>×</button>
-          </span>
-        ))}
-        <button className="add-meal" onClick={addMeal}>Add Meal</button>
-      </div>
+      <MealsControl meals={meals} onRemove={removeMeal} onAdd={addMeal} />
 
-      {days.map(day => {
-        const dayMeals = Object.keys(plan[day] || {});
-        return (
-          <div key={day} className={`day-card ${day === currentDayName && week === currentWeek ? 'today' : ''}`}>
-            <h2>{day}</h2>
-            {dayMeals.map(meal => (
-              <div key={meal} className="meal-block">
-                <div className="meal-header">
-                  <span className="meal-label">{meal}</span>
-                  <button aria-label={`remove ${meal} on ${day}`} onClick={() => removeMealFromDay(day, meal)}>×</button>
-                </div>
-                {plan[day][meal].map((dish, idx) => (
-                  <div key={idx} className="dish-row">
-                    <select
-                      value={dish.name}
-                      onChange={e => handleDishChange(day, meal, idx, e.target.value)}
-                    >
-                      <option value="">Select dish</option>
-                      {recipes.map(r => (
-                        <option key={r} value={r}>{r}</option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      min={1}
-                      className="portion-input"
-                      aria-label="portions"
-                      value={dish.portions}
-                      onChange={e => handlePortionChange(day, meal, idx, parseInt(e.target.value) || 1)}
-                    />
-                    <button
-                      className="remove-dish"
-                      aria-label={`remove ${meal} dish`}
-                      onClick={() => removeDish(day, meal, idx)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-                <button className="add-dish" onClick={() => addDish(day, meal)}>+</button>
-              </div>
-            ))}
-            <button className="add-meal-day" aria-label={`add meal for ${day}`} onClick={() => addMealToDay(day)}>Add Meal</button>
-          </div>
-        );
-      })}
+      {days.map(day => (
+        <DayCard
+          key={day}
+          day={day}
+          meals={plan[day] || {}}
+          recipes={recipes}
+          isToday={day === currentDayName && week === currentWeek}
+          onDishChange={(meal, idx, value) => handleDishChange(day, meal, idx, value)}
+          onPortionChange={(meal, idx, value) => handlePortionChange(day, meal, idx, value)}
+          onAddDish={meal => addDish(day, meal)}
+          onRemoveDish={(meal, idx) => removeDish(day, meal, idx)}
+          onAddMeal={() => addMealToDay(day)}
+          onRemoveMeal={meal => removeMealFromDay(day, meal)}
+        />
+      ))}
     </div>
   );
 };
