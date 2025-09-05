@@ -106,7 +106,7 @@ const WeekPlanner: React.FC = () => {
         const updated = { ...prev };
         Object.values(updated).forEach(weekPlan => {
           days.forEach(day => {
-            weekPlan[day][name] = [''];
+            weekPlan[day][name] = [{ name: '', portions: 1 }];
           });
         });
         return updated;
