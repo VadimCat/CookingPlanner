@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import PlannerPage from './PlannerPage';
 import SettingsPage from './SettingsPage';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'settings'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'planner' | 'settings'>('home');
 
   return (
     <div className="App">
       {activeTab === 'settings' ? (
         <SettingsPage />
+      ) : activeTab === 'planner' ? (
+        <PlannerPage />
       ) : (
         <div>
           <header className="App-header">
@@ -34,6 +37,12 @@ const App: React.FC = () => {
           onClick={() => setActiveTab('home')}
         >
           Home
+        </button>
+        <button
+          className={activeTab === 'planner' ? 'active' : ''}
+          onClick={() => setActiveTab('planner')}
+        >
+          Planner
         </button>
         <button
           className={activeTab === 'settings' ? 'active' : ''}
