@@ -1,24 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import WeekPlanner from './WeekPlanner';
+import SettingsPage from './SettingsPage';
 
 function App() {
+  const [tab, setTab] = useState<'planner' | 'shopping' | 'settings'>('planner');
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      {tab === 'planner' && <WeekPlanner />}
+      {tab === 'shopping' && (
+        <div>
+          <h1>Shopping List</h1>
+        </div>
+      )}
+      {tab === 'settings' && <SettingsPage />}
+      <nav className="BottomBar">
+        <button
+          className={tab === 'planner' ? 'active' : ''}
+          onClick={() => setTab('planner')}
         >
-          Learn React
-        </a>
-      </header>
+          Planner
+        </button>
+        <button
+          className={tab === 'shopping' ? 'active' : ''}
+          onClick={() => setTab('shopping')}
+        >
+          Shopping
+        </button>
+        <button
+          className={tab === 'settings' ? 'active' : ''}
+          onClick={() => setTab('settings')}
+        >
+          Settings
+        </button>
+      </nav>
     </div>
   );
 }
