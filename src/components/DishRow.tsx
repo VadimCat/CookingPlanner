@@ -1,21 +1,22 @@
 import React from 'react';
-import { Dish } from '../types';
+import { MealEntry } from '../Models/plan';
+import { Recipe } from '../Models/recipe';
 
 interface DishRowProps {
-  dish: Dish;
-  recipes: string[];
+  entry: MealEntry;
+  recipes: Recipe[];
   removeLabel: string;
-  onNameChange: (value: string) => void;
+  onRecipeChange: (value: string) => void;
   onPortionChange: (value: number) => void;
   onRemove: () => void;
 }
 
-const DishRow: React.FC<DishRowProps> = ({ dish, recipes, removeLabel, onNameChange, onPortionChange, onRemove }) => (
+const DishRow: React.FC<DishRowProps> = ({ entry, recipes, removeLabel, onRecipeChange, onPortionChange, onRemove }) => (
   <div className="dish-row">
-    <select value={dish.name} onChange={e => onNameChange(e.target.value)}>
+    <select value={entry.recipeId} onChange={e => onRecipeChange(e.target.value)}>
       <option value="">Select dish</option>
       {recipes.map(r => (
-        <option key={r} value={r}>{r}</option>
+        <option key={r.id} value={r.id}>{r.title}</option>
       ))}
     </select>
     <input
@@ -23,7 +24,7 @@ const DishRow: React.FC<DishRowProps> = ({ dish, recipes, removeLabel, onNameCha
       min={1}
       className="portion-input"
       aria-label="portions"
-      value={dish.portions}
+      value={entry.servings}
       onChange={e => onPortionChange(parseInt(e.target.value) || 1)}
     />
     <button

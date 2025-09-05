@@ -3,19 +3,27 @@ import './WeekPlanner.css';
 import WeekHeader from './components/WeekHeader';
 import MealsControl from './components/MealsControl';
 import DayCard from './components/DayCard';
-import { Dish, Plan } from './types';
+import { MealEntry } from './Models/plan';
+import { Recipe } from './Models/recipe';
 
 const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const recipes = ['Omelette','Salad','Soup','Steak'];
+const recipes: Recipe[] = [
+  { id: '1', title: 'Omelette', servings: 1, ingredients: [], createdAt: '', updatedAt: '' },
+  { id: '2', title: 'Salad', servings: 1, ingredients: [], createdAt: '', updatedAt: '' },
+  { id: '3', title: 'Soup', servings: 1, ingredients: [], createdAt: '', updatedAt: '' },
+  { id: '4', title: 'Steak', servings: 1, ingredients: [], createdAt: '', updatedAt: '' },
+];
 
 const defaultMeals = ['Breakfast','Lunch','Dinner'];
 
 const WeekPlanner: React.FC = () => {
   const [mealsByWeek, setMealsByWeek] = useState<Record<number, string[]>>({0: defaultMeals});
 
+  type Plan = Record<string, Record<string, MealEntry[]>>;
+
   const createEmptyPlan = (mealsList: string[]): Plan => {
     return Object.fromEntries(
-      days.map(d => [d, Object.fromEntries(mealsList.map(m => [m, [{ name: '', portions: 1 }]]))])
+      days.map(d => [d, Object.fromEntries(mealsList.map(m => [m, [{ recipeId: '', servings: 1 }]]))])
     ) as Plan;
   };
 
@@ -48,14 +56,14 @@ const WeekPlanner: React.FC = () => {
   const meals = mealsByWeek[week] || defaultMeals;
   const plan = plans[week] || createEmptyPlan(meals);
 
-  const handleDishChange = (day: string, meal: string, idx: number, value: string) => {
+  const handleRecipeChange = (day: string, meal: string, idx: number, value: string) => {
     setPlans(prev => ({
       ...prev,
       [week]: {
         ...prev[week],
         [day]: {
           ...prev[week][day],
-          [meal]: prev[week][day][meal].map((v, i) => i === idx ? { ...v, name: value } : v)
+          [meal]: prev[week][day][meal].map((v, i) => i === idx ? { ...v, recipeId: value } : v)
         }
       }
     }));
@@ -68,7 +76,7 @@ const WeekPlanner: React.FC = () => {
         ...prev[week],
         [day]: {
           ...prev[week][day],
-          [meal]: prev[week][day][meal].map((v, i) => i === idx ? { ...v, portions: value } : v)
+          [meal]: prev[week][day][meal].map((v, i) => i === idx ? { ...v, servings: value } : v)
         }
       }
     }));
@@ -81,7 +89,7 @@ const WeekPlanner: React.FC = () => {
         ...prev[week],
         [day]: {
           ...prev[week][day],
-          [meal]: [...prev[week][day][meal], { name: '', portions: 1 }]
+          [meal]: [...prev[week][day][meal], { recipeId: '', servings: 1 }]
         }
       }
     }));
@@ -96,7 +104,7 @@ const WeekPlanner: React.FC = () => {
           ...prev[week],
           [day]: {
             ...prev[week][day],
-            [meal]: updatedMeal.length ? updatedMeal : [{ name: '', portions: 1 }]
+            [meal]: updatedMeal.length ? updatedMeal : [{ recipeId: '', servings: 1 }]
           }
         }
       };
@@ -111,8 +119,8 @@ const WeekPlanner: React.FC = () => {
         ...prev,
         [week]: days.reduce((acc, day) => ({
           ...acc,
-          [day]: { ...prev[week][day], [name]: [{ name: '', portions: 1 }] }
-        }), {} as Record<string, Record<string, Dish[]>>)
+          [day]: { ...prev[week][day], [name]: [{ recipeId: '', servings: 1 }] }
+        }), {} as Record<string, Record<string, MealEntry[]>>)
       }));
     }
   };
@@ -124,7 +132,7 @@ const WeekPlanner: React.FC = () => {
       [week]: days.reduce((acc, day) => {
         const { [meal]: _, ...rest } = prev[week][day];
         return { ...acc, [day]: rest };
-      }, {} as Record<string, Record<string, Dish[]>>)
+      }, {} as Record<string, Record<string, MealEntry[]>>)
     }));
   };
 
@@ -137,7 +145,7 @@ const WeekPlanner: React.FC = () => {
         ...prev[week],
         [day]: {
           ...prev[week][day],
-          [name]: [{ name: '', portions: 1 }]
+          [name]: [{ recipeId: '', servings: 1 }]
         }
       }
     }));
@@ -183,7 +191,7 @@ const WeekPlanner: React.FC = () => {
           meals={plan[day] || {}}
           recipes={recipes}
           isToday={day === currentDayName && week === currentWeek}
-          onDishChange={(meal, idx, value) => handleDishChange(day, meal, idx, value)}
+          onRecipeChange={(meal, idx, value) => handleRecipeChange(day, meal, idx, value)}
           onPortionChange={(meal, idx, value) => handlePortionChange(day, meal, idx, value)}
           onAddDish={meal => addDish(day, meal)}
           onRemoveDish={(meal, idx) => removeDish(day, meal, idx)}

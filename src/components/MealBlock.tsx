@@ -1,14 +1,15 @@
 import React from 'react';
-import { Dish } from '../types';
+import { MealEntry } from '../Models/plan';
+import { Recipe } from '../Models/recipe';
 import DishRow from './DishRow';
 
 interface MealBlockProps {
   meal: string;
-  dishes: Dish[];
-  recipes: string[];
+  dishes: MealEntry[];
+  recipes: Recipe[];
   removeMealLabel: string;
   onRemoveMeal: () => void;
-  onDishChange: (idx: number, value: string) => void;
+  onRecipeChange: (idx: number, value: string) => void;
   onPortionChange: (idx: number, value: number) => void;
   onAddDish: () => void;
   onRemoveDish: (idx: number) => void;
@@ -20,7 +21,7 @@ const MealBlock: React.FC<MealBlockProps> = ({
   recipes,
   removeMealLabel,
   onRemoveMeal,
-  onDishChange,
+  onRecipeChange,
   onPortionChange,
   onAddDish,
   onRemoveDish,
@@ -30,13 +31,13 @@ const MealBlock: React.FC<MealBlockProps> = ({
       <span className="meal-label">{meal}</span>
       <button aria-label={removeMealLabel} onClick={onRemoveMeal}>×</button>
     </div>
-    {dishes.map((dish, idx) => (
+    {dishes.map((entry, idx) => (
       <DishRow
         key={idx}
-        dish={dish}
+        entry={entry}
         recipes={recipes}
         removeLabel={`remove ${meal} dish`}
-        onNameChange={value => onDishChange(idx, value)}
+        onRecipeChange={value => onRecipeChange(idx, value)}
         onPortionChange={value => onPortionChange(idx, value)}
         onRemove={() => onRemoveDish(idx)}
       />
