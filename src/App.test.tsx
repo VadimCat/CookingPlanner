@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import App from './App';
 
 test('renders week heading and navigates', () => {
@@ -33,4 +33,25 @@ test('meal labels, remove dish and highlight current day', () => {
   const todayName = dayNames[(new Date().getDay() + 6) % 7];
   const todayHeading = screen.getByRole('heading', { name: todayName });
   expect(todayHeading.parentElement).toHaveClass('today');
+});
+
+test('add and remove meal per day and change portions', () => {
+  render(<App />);
+
+  const promptSpy = jest.spyOn(window, 'prompt').mockReturnValue('Snack');
+  const addMealBtn = screen.getByLabelText(/add meal for Monday/i);
+  fireEvent.click(addMealBtn);
+  expect(screen.getAllByText('Snack').length).toBeGreaterThan(0);
+
+  const removeMealBtn = screen.getByLabelText('remove Breakfast on Monday');
+  fireEvent.click(removeMealBtn);
+  const mondayCard = screen.getByRole('heading', { name: 'Monday' }).parentElement!;
+  expect(within(mondayCard).queryByText('Breakfast')).toBeNull();
+
+  promptSpy.mockRestore();
+
+  const portionInputs = screen.getAllByLabelText('portions');
+  expect((portionInputs[0] as HTMLInputElement).value).toBe('1');
+  fireEvent.change(portionInputs[0], { target: { value: '3' } });
+  expect((portionInputs[0] as HTMLInputElement).value).toBe('3');
 });
