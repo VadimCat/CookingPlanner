@@ -1,0 +1,129 @@
+.WeekPlanner {
+  padding: 16px;
+  max-width: 480px;
+  margin: 0 auto 80px;
+}
+
+.week-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.week-header button {
+  background: none;
+  border: none;
+  font-size: 24px;
+}
+
+.meals-control {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meal-chip {
+  background: #eee;
+  border-radius: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.meal-chip button {
+  margin-left: 4px;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+
+.add-meal {
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 16px;
+  padding: 4px 12px;
+}
+
+.day-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+  padding: 8px;
+}
+
+.day-card h2 {
+  margin-top: 0;
+}
+
+.meal-block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.meal-label {
+  font-weight: 600;
+}
+
+.dish-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.dish-row select {
+  flex: 1;
+  padding: 4px;
+}
+
+.portion-input {
+  width: 60px;
+  margin-left: 4px;
+  padding: 4px;
+}
+
+.remove-dish {
+  margin-left: 4px;
+  border: none;
+  background: none;
+  color: #d32f2f;
+  font-size: 16px;
+}
+
+.add-dish {
+  align-self: flex-start;
+  border: none;
+  background: #1976d2;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.add-meal-day {
+  border: none;
+  background: #1976d2;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.day-card.today {
+  background: #e3f2fd;
+}
+
+@media (min-width: 600px) {
+  .WeekPlanner {
+    max-width: 600px;
+  }
+}
