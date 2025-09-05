@@ -1,0 +1,85 @@
+.WeekPlanner {
+  padding: 16px;
+  max-width: 480px;
+  margin: 0 auto 80px;
+}
+
+.week-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.week-header button {
+  background: none;
+  border: none;
+  font-size: 24px;
+}
+
+.meals-control {
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meal-chip {
+  background: #eee;
+  border-radius: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.meal-chip button {
+  margin-left: 4px;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+
+.add-meal {
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 16px;
+  padding: 4px 12px;
+}
+
+.day-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+  padding: 8px;
+}
+
+.day-card h2 {
+  margin-top: 0;
+}
+
+.meal-block {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.meal-block select {
+  padding: 4px;
+  margin-bottom: 4px;
+}
+
+.add-dish {
+  align-self: flex-start;
+  border: none;
+  background: #1976d2;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+@media (min-width: 600px) {
+  .WeekPlanner {
+    max-width: 600px;
+  }
+}
